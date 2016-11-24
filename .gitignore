@@ -103,4 +103,6 @@ thumbs.db
 Thumbs.db
 
 # configs
-configs.json,configs.yml,configs
+configs.json
+configs.yml
+configs
