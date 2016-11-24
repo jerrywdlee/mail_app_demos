@@ -1,0 +1,209 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <title>Mail To Creator</title>
+    <script src="https://code.jquery.com/jquery-2.2.4.min.js" ></script>
+    <script type="text/javascript">
+    var create_link,create_link_urlencode,create_link_rich_text;
+    (function ($) {
+      $(document).ready(function () {
+        create_link = function () {
+          var url_str = "mailto:";
+          url_str += ($('input[name=to]').val()+'?');
+          url_str += ('cc='+$('input[name=cc]').val()+'&');
+          url_str += ('bcc='+$('input[name=bcc]').val()+'&');
+          url_str += ('subject='+$('input[name=sub]').val()+'&');
+          var body_str = ($('textarea[name=body]').val()).replace(/\r\n|\r|\n/g,'%0d%0a')
+          url_str += ('body='+body_str);
+          console.log(url_str);
+          $('a#mailto').attr('href',url_str);
+          $('a#mailto').removeClass('hide');
+          //return url_str;
+        }
+        create_link_urlencode = function () {
+          var url_str = "mailto:";
+          url_str += ($('input[name=to]').val()+'?');
+          url_str += ('cc='+$('input[name=cc]').val()+'&');
+          url_str += ('bcc='+$('input[name=bcc]').val()+'&');
+          url_str += ('subject='+ encodeURI($('input[name=sub]').val())+'&');
+          //var body_str = ($('textarea[name=body]').val()).replace(/\r\n|\r|\n/g,'%0d%0a')
+          //url_str += ('body='+body_str);
+          url_str += ('body='+encodeURI($('textarea[name=body]').val()));
+          console.log(url_str);
+          $('a#mailto').attr('href',url_str);
+          $('a#mailto').removeClass('hide');
+        }
+        create_link_rich_text = function () {
+          var url_str = "mailto:";
+          url_str += ($('input[name=to]').val()+'?');
+          url_str += ('cc='+$('input[name=cc]').val()+'&');
+          url_str += ('bcc='+$('input[name=bcc]').val()+'&');
+          url_str += ('subject='+ encodeURI($('input[name=sub]').val())+'&');
+          //var body_str = ($('textarea[name=body]').val()).replace(/\r\n|\r|\n/g,'%0d%0a')
+          //url_str += ('body='+body_str);
+          //url_str += ('body='+encodeURI($('div.rich_text').html()));
+          console.log(url_str);
+          $('a#mailto').attr('href',url_str);
+          $('a#mailto').removeClass('hide');
+        }
+      })
+    })(jQuery)
+    </script>
+    <script type="text/javascript">
+    //在光标位置插入文字
+    function insertText(obj,str) {
+      obj.focus();
+      if (document.selection) {
+        var sel = document.selection.createRange();
+        sel.text = str;
+      } else if (typeof obj.selectionStart == 'number' && typeof obj.selectionEnd == 'number') {
+        var startPos = obj.selectionStart,
+        endPos = obj.selectionEnd,
+        cursorPos = startPos,
+        tmpStr = obj.value;
+        obj.value = tmpStr.substring(0, startPos) + str + tmpStr.substring(endPos, tmpStr.length);
+        cursorPos += str.length;
+        obj.selectionStart = obj.selectionEnd = cursorPos;
+      } else {
+        obj.value += str;
+      }
+    }
+    function moveEnd(obj){
+      obj.focus();
+      var len = obj.value.length;
+      if (document.selection) {
+        var sel = obj.createTextRange();
+        sel.moveStart('character',len);
+        sel.collapse();
+        sel.select();
+      } else if (typeof obj.selectionStart == 'number' && typeof obj.selectionEnd == 'number') {
+        obj.selectionStart = obj.selectionEnd = len;
+      }
+    }
+    </script>
+    <style media="screen">
+      .hide{
+        display: none;
+      }
+      .rich_text{
+        border: 1px solid #ccc;
+        padding: 10px;
+        width: 300px;
+        height: 300px
+      }
+    </style>
+  </head>
+  <body>
+    <div class="content" contenteditable="false">
+      <p>To: <input type="text" name="to" value="sample@sample.com"></p>
+      <p>CC: <input type="text" name="cc" value="cc@sample.com"></p>
+      <p>Bcc: <input type="text" name="bcc" value="bcc@sample.com"></p>
+      <p>Sub: <input type="text" name="sub" value="日本語のサブジェ"></p>
+      <p>Body:</p>
+      <textarea id="texta" name="body" rows="8" cols="40">日本語のメール</textarea>
+      <div class="rich_text" contenteditable="true"  id="rich">
+        onclick="document.execCommand('selectAll', false, null);"
+        <h3>Rich Text</h3>
+        <p><a href="www.google.com">Google</a></p>
+      </div>
+    </div>
+    <div class="links">
+      <br>
+      <a href="javascript:create_link();">Create Link(Pure String)</a>&nbsp;&nbsp;
+      <a href="javascript:create_link_urlencode();">Create Link(URL Encoded)</a>&nbsp;&nbsp;
+      <a href="javascript:create_link_rich_text();">Create Link(Rich Text Title Only)</a>&nbsp;&nbsp;
+      <button type="button" name="button" onclick="selectText('rich');copy();">Select All Rich Text &amp; Copy</button>
+      <br>
+      <a id="mailto" class="hide" href="mailto:joe@example.com?subject=feedback&amp;body=Hello+World">Email Me</a>
+    </div>
+    <script type="text/javascript">
+
+    function selectText(element) {
+      var text = document.getElementById(element);
+      if (document.body.createTextRange) {
+          var range = document.body.createTextRange();
+          range.moveToElementText(text);
+          range.select();
+        } else if (window.getSelection) {
+          var selection = window.getSelection();
+          var range = document.createRange();
+          range.selectNodeContents(text);
+          selection.removeAllRanges();
+          selection.addRange(range);
+          /*if(selection.setBaseAndExtent){
+              selection.setBaseAndExtent(text, 0, text, 1);
+            }*/
+          } else {
+            alert("none");
+          }
+    }
+    function copy() {
+      setTimeout(function () {
+        document.execCommand('copy');
+      }, 10);
+    }
+  </script>
+  <script type="text/javascript">
+  /*
+      function insertText(obj,str) {
+        if (document.selection) {
+            var sel = document.selection.createRange();
+            sel.text = str;
+          } else if (typeof obj.selectionStart === 'number' && typeof obj.selectionEnd === 'number') {
+            var startPos = obj.selectionStart,
+                endPos = obj.selectionEnd,
+                cursorPos = startPos,
+                tmpStr = obj.value;
+                obj.value = tmpStr.substring(0, startPos) + str + tmpStr.substring(endPos, tmpStr.length);
+                cursorPos += str.length;
+                obj.selectionStart = obj.selectionEnd = cursorPos;
+              } else {
+              obj.value += str;
+            }
+          }
+          function moveEnd(obj){
+          obj.focus();
+          var len = obj.value.length;
+          if (document.selection) {
+            var sel = obj.createTextRange();
+            sel.moveStart('character',len);
+            sel.collapse();
+            sel.select();
+          } else if (typeof obj.selectionStart == 'number' && typeof obj.selectionEnd == 'number') {
+            obj.selectionStart = obj.selectionEnd = len;
+          }
+        }*/
+    </script>
+    <script type="text/javascript">
+      (function($){
+        $.fn.extend({
+          insertAtCaret: function(myValue){
+            var $t=$(this)[0];
+            if (document.selection) {
+                this.focus();
+                sel = document.selection.createRange();
+                sel.text = myValue;
+                this.focus();
+              }
+              else
+                if ($t.selectionStart || $t.selectionStart == '0') {
+                    var startPos = $t.selectionStart;
+                    var endPos = $t.selectionEnd;
+                    var scrollTop = $t.scrollTop;
+                    $t.value = $t.value.substring(0, startPos) + myValue + $t.value.substring(endPos, $t.value.length);
+                    this.focus();
+                    $t.selectionStart = startPos + myValue.length;
+                    $t.selectionEnd = startPos + myValue.length;
+                    $t.scrollTop = scrollTop;
+                  }
+                  else {
+                    this.value += myValue;
+                    this.focus();
+                  }
+                }
+              })
+            })(jQuery);
+    </script>
+  </body>
+</html>

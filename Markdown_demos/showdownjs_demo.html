@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <title>Showdownjs Demo</title>
+    <style media="screen">
+      div[contenteditable=true]{
+        border: 1px solid #ccc;
+        width: 70vw;
+        padding: 10px
+      }
+    </style>
+    <script src="https://cdn.rawgit.com/showdownjs/showdown/1.5.0/dist/showdown.min.js" charset="utf-8"></script>
+  </head>
+  <body>
+    <textarea id="in" name="name" rows="8" cols="40" onchange="render_md()">BBBBBBBBB
+CCCCCC
+DDDDDDD</textarea>
+    <button type="button" name="button" onclick="render_md();">Common Convert</button>
+    <button type="button" name="button" onclick="simple_new_line();">Simple New Line</button>
+    <div id="out" class="" contenteditable="true">
+      AAAAAAAAA
+    </div>
+
+    <script type="text/javascript">
+      var converter = new showdown.Converter();
+      var text      = '#hello, markdown!';
+      document.getElementById('out').innerHTML = converter.makeHtml(text);
+
+      var render_md = function () {
+        var text = document.getElementById('in').value;
+        document.getElementById('out').innerHTML = converter.makeHtml(text);
+      }
+      var simple_new_line = function () {
+        var text = document.getElementById('in').value;
+        var reg = /\r\n|\r|\n/g
+        text = text.replace(reg,'  \n');
+        document.getElementById('out').innerHTML = converter.makeHtml(text);
+      }
+    </script>
+  </body>
+</html>
